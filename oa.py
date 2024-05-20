@@ -30,7 +30,7 @@ all_values = worksheet1.get_all_values()
 old_data = pd.DataFrame(all_values[1:], columns=all_values[0])
 expansecategory = old_data['Expense Category'].unique().tolist()
 maintenance_category = old_data['Maintenance Main Category'].unique().tolist()
-old_data_columns=old_data.columns[:22]
+old_data_columns=old_data.columns[:24]
 uploaded_file = st.file_uploader("Choose a file")
 expense_categories = ['Select Category', 'All'] + expansecategory
 
@@ -90,7 +90,13 @@ class OA:
         self.old_data['Year'] = self.old_data['Year'].astype('int')
         df['Day'].fillna(1, inplace=True)
         df['Day'] = df['Day'].astype('int')
-        self.old_data['Day'] = self.old_data['Day'].astype('int')
+        try:
+            self.old_data['Day'] = self.old_data['Day'].astype('int')
+        except:
+            self.old_data['Day'] = pd.to_numeric(self.old_data['Day'], errors='coerce')
+            self.old_data['Day'] = self.old_data['Day'].fillna(1)
+            self.old_data['Day'] = self.old_data['Day'].astype('int')
+            st.dataframe(self.old_data)
         df['Date'] = pd.to_datetime(df[['Year', 'Month', 'Day']], format='%Y-%m-%d')
         self.old_data['Date'] = pd.to_datetime(self.old_data[['Year', 'Month', 'Day']], format='%Y-%m-%d')
         data_need_to_check = pd.merge(df, self.old_data, how='inner', on=[df.columns[5], df.columns[10]])
@@ -106,6 +112,7 @@ class OA:
                                                  'Expense Category', 'Maintenance Main Category', 'Quantity old',
                                                  'Net Amount old', 'Quantity new']]
         self.data_need_to_check = data_need_to_check
+        
     def display_data_selected_expense(self):
         selected_expense = self.selected_expense
         data_need_to_check = self.data_need_to_check
