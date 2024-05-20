@@ -189,7 +189,6 @@ class OA:
     def display_data_selected_expense(self):
         selected_expense = self.selected_expense
         data_need_to_check = self.data_need_to_check
-        st.write(selected_expense)
         if selected_expense == 'Select Category':
             st.session_state.clear()
         elif selected_expense == 'All':
